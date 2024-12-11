@@ -13,31 +13,29 @@
         <div class="profile">
             <div class="avatar"></div>
             <div class="info">
-            <h3 class="emp-name">Employee Name</h3>
-            <h4 class="emp-id">31735127</h4>
+                <h3 class="emp-name">Employee Name</h3>
+                <h4 class="emp-id">31735127</h4>
             </div>
         </div>
         <h4 class="label">Databases</h4>
-            <a href="">
-                <div class="tab">
-                    <i class="bi bi-people-fill"></i>
-                    <h3 class="tab-label">Employees</h3>
-                </div>
-            </a>
-
-            <a href="">
-                <div class="tab">
-                    <i class="bi bi-bank2"></i>
-                    <h3 class="tab-label">Transactions</div>
-                </div>
-            </a>
-
-            <a href="">
-                <div class="tab">
-                    <i class="bi bi-ticket-perforated-fill"></i>
-                    <h3 class="tab-label">Tickets</h3>
-                </div>
-            </a>
+        <a href="">
+            <div class="tab">
+                <i class="bi bi-people-fill"></i>
+                <h3 class="tab-label">Employees</h3>
+            </div>
+        </a>
+        <a href="">
+            <div class="tab">
+                <i class="bi bi-bank2"></i>
+                <h3 class="tab-label">Transactions</h3>
+            </div>
+        </a>
+        <a href="">
+            <div class="tab">
+                <i class="bi bi-ticket-perforated-fill"></i>
+                <h3 class="tab-label">Tickets</h3>
+            </div>
+        </a>
 
         <h4 class="label">Account Options</h4>
         <a href="">
@@ -66,18 +64,56 @@
                 <div class="payment-details">
                     <label for="seats">Seats</label>
                     <table name="seats">
-                        <td>S2</td>
-                        <td>S2</td>
+                        <?php
+                            if (isset($_GET['trans_number'])) {
+                                $transNumber = $_GET['trans_number'];
+
+                                // Fetch transaction details from the database based on transaction number
+                                $query = "SELECT TICKET.SEAT_ID, TRANSACTIONS.TRANS_PAYMENT, TRANSACTIONS.TRANS_CHANGE
+                                          FROM TICKET
+                                          INNER JOIN TRANSACTIONS ON TICKET.TRANS_NUMBER = TRANSACTIONS.TRANS_NUMBER
+                                          WHERE TRANSACTIONS.TRANS_NUMBER = ?";
+                                $stmt = $mysqli->prepare($query);
+                                $stmt->bind_param("i", $transNumber);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<tr><td>" . $row['SEAT_ID'] . "</td></tr>";
+                                    }
+
+                                    // Get the total payment and change for display
+                                    $row = $result->fetch_assoc();
+                                    $totalPrice = $row['TRANS_PAYMENT'];
+                                    $change = $row['TRANS_CHANGE'];
+                                } else {
+                                    echo "<tr><td>No seats reserved for this transaction.</td></tr>";
+                                }
+                            }
+                        ?>
                     </table>
 
                     <label for="price">Total Price</label>
-                    <p name="price">price</p>
+                    <p name="price">
+                        <?php
+                            if (isset($totalPrice)) {
+                                echo "₱" . $totalPrice; // Display the total price
+                            }
+                        ?>
+                    </p>
 
                     <label for="payment">Total Payment</label>
-                    <input type="number" name="payment" placeholder=" Enter payment." required>
+                    <input type="number" name="payment" placeholder=" Enter payment..." required>
 
                     <label for="change">Total Change</label>
-                    <p name="change">change</p>
+                    <p name="change">
+                        <?php
+                            if (isset($change)) {
+                                echo "₱" . $change; // Display the change
+                            }
+                        ?>
+                    </p>
                 </div>  
             </div>
             <input type="submit" formaction="" value="Confirm">

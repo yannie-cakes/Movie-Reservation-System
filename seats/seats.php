@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
                 $ticketQuantity = 1;
                 $movieId = 1; // Replace with the actual movie ID
 
-                // Insert into TICKET without specifying TICKET_ID, as it's auto-incremented
+                // Insert into TICKET without specifying TICKET_ID
                 $insertTicketQuery = "INSERT INTO TICKET (TICKET_PRICE, TICKET_QUANTITY, TRANS_NUMBER, MOV_ID, CIN_ID, SEAT_ID) 
                                     VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt = $mysqli->prepare($insertTicketQuery);
@@ -57,11 +57,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
         }
     }
 
-    // Redirect to transaction page if all seats are reserved
     if ($allReserved) {
-        header("Location: transaction.php?trans_number=$transactionNumber");
-        exit;
+        // Assuming $totalPrice and $change have been calculated earlier
+        $totalPrice = $ticketPrice * count($selectedSeats); // Example calculation
+        $change = $payment - $totalPrice; // Example change calculation
+    
+        // Insert transaction data into the TRANSACTIONS table
+        $insertTransactionQuery = "INSERT INTO TRANSACTIONS (TRANS_NUMBER, TRANS_DUE, TRANS_PAYMENT, TRANS_CHANGE, TRANS_DATE, EMP_ID)
+                                   VALUES (?, ?, ?, ?, NOW(), ?)";
+        $stmt = $mysqli->prepare($insertTransactionQuery);
+        $stmt->bind_param("iiiii", $transactionNumber, $totalPrice, $payment, $change, $empId);
+    
+        if ($stmt->execute()) {
+            // Get the transaction number for redirection
+            header("Location: transaction.html?trans_number=$transactionNumber");
+            exit;
+        } else {
+            // Handle failed transaction insertion
+            echo "<p>Failed to record the transaction.</p>";
+        }
     }
+    
 }
 
 $mysqli->close();
