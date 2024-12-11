@@ -13,7 +13,7 @@ if(isset($_POST['submit'])){
 
     if (strlen($PASSWORD) !== 8 || !ctype_digit($PASSWORD) ) {
         $errorMessage = 'Username and/or password is incorrect. Please try again.';
-    } elseif ($result->num_rows > 0) {
+    } else if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if($row['EMP_ROLE'] === 'Admin')
             header('Location: ../admin/emp_database.html');
