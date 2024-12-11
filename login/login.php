@@ -1,5 +1,5 @@
 <?php
-include('database_connection.php'); // For more easier connection
+include('../database_connection.php'); // For more easier connection
 
 $errorMessage = null;
 
