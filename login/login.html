@@ -10,14 +10,14 @@
 <body>
     <div class="login-box">
         <h1 class="title">Log in to System</h1>
-        <form action="" class="login-form">
+        <form method="POST" action="login.php" class="login-form">
             <label for="user-input">Username</label>
             <input type="text" name="user-input" placeholder=" Enter last name..." required>
 
             <label for="pass-input">Password</label>
-            <input type="text" name="pass-input" placeholder=" Enter employee ID..." required>
+            <input type="password" name="pass-input" placeholder=" Enter employee ID..." required>
 
-            <input type="submit" formaction="" value="Log in">
+            <input type="submit" name="submit" value="Log in">
         </form>
     </div>
 </body>
