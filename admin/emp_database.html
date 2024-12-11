@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="emp_database.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Varela+Round&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="profile">
+            <div class="avatar"></div>
+            <div class="info">
+            <h3 class="emp-name">Employee Name</h3>
+            <h4 class="emp-id">31735127</h4>
+            </div>
+        </div>
+        <h4 class="label">Databases</h4>
+            <a href="">
+                <div class="tab">
+                    <i class="bi bi-people-fill"></i>
+                    <h3 class="tab-label">Employees</h3>
+                </div>
+            </a>
+
+            <a href="">
+                <div class="tab">
+                    <i class="bi bi-bank2"></i>
+                    <h3 class="tab-label">Transactions</div>
+                </div>
+            </a>
+
+            <a href="">
+                <div class="tab">
+                    <i class="bi bi-ticket-perforated-fill"></i>
+                    <h3 class="tab-label">Tickets</h3>
+                </div>
+            </a>
+
+        <h4 class="label">Account Options</h4>
+        <a href="">
+            <div class="tab">
+                <i class="bi bi-box-arrow-left"></i>
+                <h3 class="tab-label">Log Out</h3>
+            </div>
+        </a>
+    </nav>
+
+    <div class="emp-database">
+        <h1 class="title">EMPLOYEE DATABASE</h1>
+        <form action="" class="insert-form">
+            <div class="input">
+                <label for="fname">First Name</label>
+                <input type="text" name="fname">
+            </div>
+
+            <div class="input">
+                <label for="mname">Middle Name</label>
+                <input type="text" name="mname">
+            </div>
+
+            <div class="input">
+                <label for="lname">Last Name</label>
+                <input type="text" name="lname">
+            </div>
+
+            <div class="input">
+            <label for="role">Role</label>
+            <select name="role" id="role">
+                <option value="Admin">Admin</option>
+                <option value="Employee">Employee</option>
+            </select>
+            </div>
+
+            <input type="submit" value="Insert">
+        </form>
+        <div class="table-container">
+        <table>
+            <tr>
+                <th>EMP_ID</th>
+                <th>EMP_FNAME</th>
+                <th>EMP_MNAME</th>
+                <th>EMP_LNAME</th>
+                <th>EMP_ROLE</th>
+                <th>ACTION</th>
+            </tr>
+            
+            <tr>
+                <td>0000001</td>
+                <td>Jane Albert</td>
+                <td>Dela Torre</td>
+                <td>Balagtas</td>
+                <td>Admin</td>
+                <td><a class="action" href="">Update</a> | <a class="action">Delete</a></td>
+            </tr>
+            
+        </table>
+    </div>
+    </div>
+
+    
+</body>
+
+<!--TO BE CONVERTED TO PHP-->
+</html>
