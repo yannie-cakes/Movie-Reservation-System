@@ -1,0 +1,208 @@
+:root {
+    --light-blue: #CEDEF0;
+    --purple: #9D9AD9;
+    --dark-blue: #6B9BD1;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-areas: 
+        "nav-bar cinema-image"
+        "nav-bar seat-selection";
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 50% 50%;
+    overflow: hidden;
+}
+
+/* Navbar styles */
+.nav-bar {
+    grid-area: nav-bar;
+    height: 100vh;
+    box-shadow: 0 4px 10px 4px rgb(0 0 0 / 0.5);
+}
+
+.profile {
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.avatar {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    background-color: var(--light-blue);
+}
+
+.emp-name {
+    font-family: var(--main-font);
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.emp-id, .label {
+    font-family: var(--main-font);
+    font-size: 14px;
+    margin-top: 5px;
+    color: gray;
+}
+
+.label {
+    margin: 20px;
+    margin-top: 20px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 20px;
+}
+
+.bi {
+    font-size: 30px; 
+    line-height: 30px; 
+    width: 30px; 
+    height: 30px; 
+    display: inline-block; 
+    text-align: center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+.tab-label {
+    font-family: var(--main-font);
+    font-size: 18px;
+}
+
+a:hover {
+    color: var(--dark-blue);
+}
+
+.tab:hover, .tab:focus {
+    background-color: var(--light-blue);
+    border-left: 5px solid var(--dark-blue);
+    color: var(--dark-blue);
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 20px 0 20px;
+}
+
+/* Cinema image styles */
+.cinema-image {
+    grid-area: cinema-image;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.cinema-image img {
+    width: 100%;
+    height: 100%;
+ 
+}
+#seat-selection {
+  
+
+    border: 1px solid #ccc;
+    width: 10%;
+   
+    background-color: #f4f4f4;
+}
+
+.seat-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.seat-column {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Makes this column scrollable */
+    max-height: 300px; /* Set a max-height to allow scrolling when needed */
+    padding-right: 10px; /* Adds padding to the right to prevent scrollbar overlap */
+}
+
+.seat-row label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+}
+
+#confirm-seats {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+#confirm-seats:hover {
+    background-color: #45a049;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-areas: 
+    "nav-bar cinema-image"
+    "nav-bar seat-selection";
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 50% 50%;
+    overflow: hidden;
+}
+/* Seat Selection Container */
+.seat-selection {
+    width: 100%; /* Makes the container stretch across the available width */
+    height: 100%; /* Set a fixed height, adjust as needed */
+    margin: 0 auto; /* Centers the container horizontally */
+    background-color: #f4f4f4;
+    margin-top: -30px;
+    padding: 10px; /* Optional: adds some padding inside the container */
+    overflow-y: auto; /* Adds a scrollbar when content overflows vertically */
+    box-sizing: border-box; /* Ensures padding is included in height/width calculations */
+}
+
+/* Seat Row styles */
+.seat-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5px; /* Adds space between checkboxes */
+    margin-bottom: 5px; /* Reduce the gap between rows */
+    text-align: center;
+    flex-grow: 1; /* Allow rows to grow to fit the available width */
+}
+
+/* Individual Seat styling */
+.seat-row input[type="checkbox"] {
+    margin-right: 5px; /* Reduce the space between checkboxes */
+}
+
+/* Seat Label styling */
+.seat-row label {
+    font-size: 10px; /* Adjust label size */
+}
+
+/* Adjust for each row of seats */
+.row {
+    margin-bottom: 5px; /* Reduce margin between rows */
+}
