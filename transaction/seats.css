@@ -151,7 +151,6 @@ body {
     justify-items: center;
 }
 
-/* Seat Selection styles */
 .seat-selection {
     display: flex;
     flex-direction: column;
@@ -177,7 +176,6 @@ body {
     justify-content: center;
 }
 
-/* Button-like checkboxes */
 .seat-row input[type="checkbox"] {
     display: none;
 }
@@ -203,4 +201,47 @@ body {
     background-color: var(--checked-red);
     transform: scale(1.1);
     box-shadow: 0 6px 10px rgba(255, 0, 0, 0.4);
+}
+
+.screen {
+    background-color: rgb(61, 54, 54);
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    width: 60%;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.seats-form {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    position: relative;
+}
+
+#reserve-button {
+    background-color: var(--purple);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 20px;
+    left: 44%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#reserve-button:hover {
+    background-color: #7d6fc2;
+    transform: scale(1.05);
+}
+
+#reserve-button:active {
+    background-color: #6959a6;
 }

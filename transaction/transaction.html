@@ -48,39 +48,80 @@
     
     <div class="transaction-box">
         <h1 class="title">TRANSACTIONS</h1>
-        <form action="" class="trans-form">
+        <form action="transaction.php" method="post" class="trans-form">
             <div class="container">
                 <div class="customer">
                     <label for="fname">Customer First Name</label>
                     <input type="text" name="fname" placeholder=" Enter first name..." required>
-
+        
                     <label for="mname">Customer Middle Name</label>
                     <input type="text" name="mname" placeholder=" Enter middle name..." required>
-
+        
                     <label for="lname">Customer Last Name</label>
                     <input type="text" name="lname" placeholder=" Enter last name..." required>
                 </div>
-
                 <div class="payment-details">
                     <label for="seats">Seats</label>
-                    <table name="seats">
+                    <table id="seats-table" border="1">
+                        <!-- Dynamically populated rows -->
                     </table>
-                    <a href="seats.html">View Reserved Seats</a>
+
+                    <!-- Add button for reserving seats -->
+                    <button type="button" class="reserve-seats-btn" onclick="window.location.href='seats.html';">Reserve Seats</button>
 
                     <label for="price">Total Price</label>
-                    <p name="price">
-                    </p>
+                    <p id="total-price">0</p>
 
                     <label for="payment">Total Payment</label>
-                    <input type="number" name="payment" placeholder=" Enter payment..." required>
+                    <input type="number" name="payment" placeholder="Enter payment..." required>
 
                     <label for="change">Total Change</label>
-                    <p name="change">
-                    </p>
-                </div>  
+                    <p name="change"></p>
+                </div>
             </div>
-            <input type="submit" formaction="" value="Confirm">
+            <input type="submit" value="Confirm">
         </form>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const seats = JSON.parse(localStorage.getItem("selectedSeats")) || [];
+                const seatsTable = document.getElementById("seats-table");
+
+                // Populate seats in the table
+                seats.forEach((seat) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td>${seat}</td>`;
+                    seatsTable.appendChild(row);
+                });
+
+                // Calculate total price
+                const seatPrice = 150; // Example price
+                document.getElementById("total-price").textContent = seats.length * seatPrice;
+
+                // Add seats to form for server-side processing
+                const form = document.querySelector(".trans-form");
+                seats.forEach((seat) => {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "selectedSeats[]";
+                    input.value = seat;
+                    form.appendChild(input);
+                });
+            });
+        
+            // Calculate total price based on selected seats
+            const seatPrice = 150; // Example price
+            document.getElementById('total-price').textContent = seats.length * seatPrice;
+        
+            // Fetch the latest customer ID
+            fetch('fetch_customer_id.php')
+                .then(response => response.json())
+                .then(data => {
+                    const cusId = data.cus_id; // Display this where appropriate
+                    console.log('Customer ID:', cusId);
+                })
+                .catch(error => console.error('Error fetching customer ID:', error));
+        </script>
     </div>
 </body>
 </html>

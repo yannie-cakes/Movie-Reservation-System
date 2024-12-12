@@ -44,10 +44,10 @@
         </a>
     </nav>
 
-
     <section class="seat-selection">
         <h2>Seat Selection</h2>
-        <form class="seats-form" action="seats.php" method="post">
+        <div class="screen">SCREEN</div>
+        <form class="seats-form" action="transaction.html" method="post">
             <div id="seats-container"></div>
             <button type="submit" id="reserve-button">Reserve</button>
         </form>
@@ -84,6 +84,38 @@
     
             rowContainer.appendChild(seatRow);
             seatsContainer.appendChild(rowContainer);
+        });        
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const selectedSeats = new Set();
+
+            // Handle seat selection
+            document.getElementById("seats-container").addEventListener("change", (event) => {
+                const seat = event.target;
+                if (seat.type === "checkbox") {
+                    if (seat.checked) {
+                        selectedSeats.add(seat.value);
+                    } else {
+                        selectedSeats.delete(seat.value);
+                    }
+                }
+            });
+
+            // Store selected seats and redirect
+            document.querySelector(".seats-form").addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                if (selectedSeats.size === 0) {
+                    alert("Please select at least one seat!");
+                    return;
+                }
+
+                localStorage.setItem("selectedSeats", JSON.stringify([...selectedSeats]));
+
+                // Redirect to transaction.html
+                window.location.href = "transaction.html";
+            });
         });
     </script>
 </body>

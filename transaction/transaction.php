@@ -1,29 +1,42 @@
 <?php
-// Include the database connection
 include('../database_connection.php');
 
-// Example: Set a default employee ID or retrieve it from the session
-$empId = 1;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $fname = $_POST['fname'];
+    $mname = $_POST['mname'];
+    $lname = $_POST['lname'];
+    $seats = $_POST['seats']; // Array of seats
+    $payment = $_POST['payment'];
+    $totalPrice = count($seats) * 250; // Example price calculation
+    $change = $payment - $totalPrice;
+    $transactionNumber = uniqid(); // Generate a unique transaction number
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['transaction'])) {
-    $transactionNumber = 123; // Transaction number should come from the logic of your app (perhaps auto-generated or set in a session)
-    $payment = 500; // Example payment amount
+    // Insert transaction into database
+    $empId = 1; // Replace with actual logged-in employee ID
+    $stmt = $mysqli->prepare("INSERT INTO TRANSACTIONS (TRANS_NUMBER, TRANS_DUE, TRANS_PAYMENT, TRANS_CHANGE, TRANS_DATE, EMP_ID)
+                              VALUES (?, ?, ?, ?, NOW(), ?)");
+    $stmt->bind_param("iiiii", $transactionNumber, $totalPrice, $payment, $change, $empId);
+    $stmt->execute();
 
-    $insertTransactionQuery = "INSERT INTO TRANSACTIONS (TRANS_NUMBER, TRANS_DUE, TRANS_PAYMENT, TRANS_DATE, EMP_ID)
-                            VALUES (?, ?, ?, NOW(), ?)";
-    $stmt = $mysqli->prepare($insertTransactionQuery);
-    $stmt->bind_param("iiiii", $transactionNumber, $payment, $payment, $empId);
+    // Insert seats and tickets into database
+    foreach ($seats as $seat) {
+        $seatId = $seat; // Customize if needed
+        $cinemaId = 1;   // Example cinema ID
+        $movieId = 1;    // Example movie ID
 
-    if ($stmt->execute()) {
-        // Get the last inserted transaction number
-        $transactionNumber = $stmt->insert_id;  
-    } else {
-        echo "<p>Failed to record the transaction.</p>";
-        exit; // Stop further execution if transaction failed
+        // Reserve seat
+        $stmt = $mysqli->prepare("INSERT INTO SEAT (SEAT_ID, SEAT_NUMBER, CIN_ID) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $seatId, $seat, $cinemaId);
+        $stmt->execute();
+
+        // Add ticket
+        $stmt = $mysqli->prepare("INSERT INTO TICKET (TICKET_PRICE, TICKET_QUANTITY, TRANS_NUMBER, MOV_ID, CIN_ID, SEAT_ID) 
+                                  VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iiiiss", $seatPrice, 1, $transactionNumber, $movieId, $cinemaId, $seatId);
+        $stmt->execute();
     }
 
-    // Redirect to the seats page with the transaction number
-    header("Location: seats/seats.php?transaction_number=$transactionNumber");
-    exit();
+    header("Location: success.html?trans_number=$transactionNumber");
+    exit;
 }
 ?>
