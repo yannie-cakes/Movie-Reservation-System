@@ -2,6 +2,8 @@
 // Include the database connection
 include('../database_connection.php');
 
+
+// Get transaction number from the URL
 if (isset($_GET['transaction_number'])) {
     $transactionNumber = $_GET['transaction_number'];
 } else {
@@ -10,8 +12,8 @@ if (isset($_GET['transaction_number'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
-    $selectedSeats = $_POST['seats']; 
-    $cinemaId = 1; 
+    $selectedSeats = $_POST['seats']; // Array of selected seat numbers
+    $cinemaId = 1; // Example cinema ID (adjust as needed)
 
     // Array to hold successfully reserved seat IDs
     $reservedSeats = [];
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
             // Seat is already reserved
             echo "<p>Seat $seatNumber is already reserved!</p>";
         } else {
-            // Reserve the seat
+            // Reserve the seat by inserting into SEAT table
             $insertSeatQuery = "INSERT INTO SEAT (SEAT_ID, SEAT_NUMBER, CIN_ID) VALUES (?, ?, ?)";
             $stmt = $mysqli->prepare($insertSeatQuery);
             $stmt->bind_param("ssi", $seatId, $seatNumber, $cinemaId);
@@ -39,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
             if ($stmt->execute()) {
                 echo "<p>Seat $seatNumber reserved successfully!</p>";
 
-                // Insert into TICKET now that the transaction is successfully inserted
+                // Insert corresponding ticket into TICKET table
                 $insertTicketQuery = "INSERT INTO TICKET (TICKET_PRICE, TICKET_QUANTITY, TRANS_NUMBER, MOV_ID, CIN_ID, SEAT_ID) 
                                       VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt = $mysqli->prepare($insertTicketQuery);
@@ -61,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seats'])) {
 
     // Redirect back to the transactions page with the reserved seats
     $reservedSeatsString = implode(',', $reservedSeats);
-    header("Location: transactions.php?reserved_seats=$reservedSeatsString&transaction_number=$transactionNumber");
+    header("Location: ../transactions.php?reserved_seats=$reservedSeatsString&transaction_number=$transactionNumber");
     exit();
 }
+
+?>
