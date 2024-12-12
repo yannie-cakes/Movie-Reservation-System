@@ -1,42 +1,61 @@
 <?php
 include('../database_connection.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fname = $_POST['fname'];
-    $mname = $_POST['mname'];
-    $lname = $_POST['lname'];
-    $seats = $_POST['seats']; // Array of seats
-    $payment = $_POST['payment'];
-    $totalPrice = count($seats) * 250; // Example price calculation
-    $change = $payment - $totalPrice;
-    $transactionNumber = uniqid(); // Generate a unique transaction number
+// Check if seats are selected
+if (isset($_POST['seats'])) {
+    $selectedSeats = $_POST['seats']; 
+    $cinemaId = 1; // Example cinema ID (adjust as needed)
+    $transactionNumber = 12345; // Example transaction number (adjust dynamically)
 
-    // Insert transaction into database
-    $empId = 1; // Replace with actual logged-in employee ID
-    $stmt = $mysqli->prepare("INSERT INTO TRANSACTIONS (TRANS_NUMBER, TRANS_DUE, TRANS_PAYMENT, TRANS_CHANGE, TRANS_DATE, EMP_ID)
-                              VALUES (?, ?, ?, ?, NOW(), ?)");
-    $stmt->bind_param("iiiii", $transactionNumber, $totalPrice, $payment, $change, $empId);
-    $stmt->execute();
+    // Array to hold successfully reserved seat IDs
+    $reservedSeats = [];
 
-    // Insert seats and tickets into database
-    foreach ($seats as $seat) {
-        $seatId = $seat; // Customize if needed
-        $cinemaId = 1;   // Example cinema ID
-        $movieId = 1;    // Example movie ID
+    foreach ($selectedSeats as $seatNumber) {
+        // Generate a unique SEAT_ID
+        $seatId = $cinemaId . $seatNumber;  
 
-        // Reserve seat
-        $stmt = $mysqli->prepare("INSERT INTO SEAT (SEAT_ID, SEAT_NUMBER, CIN_ID) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $seatId, $seat, $cinemaId);
+        // Check if the seat is already reserved
+        $checkSeatQuery = "SELECT SEAT_ID FROM SEAT WHERE SEAT_ID = ?";
+        $stmt = $mysqli->prepare($checkSeatQuery);
+        $stmt->bind_param("s", $seatId);
         $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Add ticket
-        $stmt = $mysqli->prepare("INSERT INTO TICKET (TICKET_PRICE, TICKET_QUANTITY, TRANS_NUMBER, MOV_ID, CIN_ID, SEAT_ID) 
-                                  VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiiiss", $seatPrice, 1, $transactionNumber, $movieId, $cinemaId, $seatId);
-        $stmt->execute();
+        if ($result->num_rows > 0) {
+            // Seat is already reserved
+            echo "<p>Seat $seatNumber is already reserved!</p>";
+        } else {
+            // Reserve the seat by inserting into SEAT table
+            $insertSeatQuery = "INSERT INTO SEAT (SEAT_ID, SEAT_NUMBER, CIN_ID) VALUES (?, ?, ?)";
+            $stmt = $mysqli->prepare($insertSeatQuery);
+            $stmt->bind_param("ssi", $seatId, $seatNumber, $cinemaId);
+
+            if ($stmt->execute()) {
+                echo "<p>Seat $seatNumber reserved successfully!</p>";
+
+                // Insert corresponding ticket into TICKET table
+                $insertTicketQuery = "INSERT INTO TICKET (TICKET_PRICE, TICKET_QUANTITY, TRANS_NUMBER, MOV_ID, CIN_ID, SEAT_ID) 
+                                      VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $mysqli->prepare($insertTicketQuery);
+                $stmt->bind_param("iiiiss", 250, 1, $transactionNumber, 1 /* movieId */, 
+                                  $cinemaId, $seatId);
+
+                if ($stmt->execute()) {
+                    echo "<p>Seat $seatNumber added to the transaction.</p>";
+                    // Add seat ID to reserved seats array for redirection
+                    array_push($reservedSeats, urlencode($seatId));
+                } else {
+                    echo "<p>Failed to add Seat $seatNumber to the transaction.</p>";
+                }
+            } else {
+                echo "<p>Failed to reserve seat $seatNumber.</p>";
+            }
+        }
     }
 
-    header("Location: success.html?trans_number=$transactionNumber");
-    exit;
+    // Redirect back to the transactions page with the reserved seats
+    $reservedSeatsString = implode(',', $reservedSeats);
+    header("Location: ../transactions.php?reserved_seats=$reservedSeatsString&transaction_number=$transactionNumber");
+    exit();
 }
 ?>
