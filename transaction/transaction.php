@@ -47,7 +47,7 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
             </a>
 
         <h4 class="label">Account Options</h4>
-        <a href="">
+        <a href="../login/logout.php">
             <div class="tab">
                 <i class="bi bi-box-arrow-left"></i>
                 <h3 class="tab-label">Log Out</h3>
@@ -57,7 +57,7 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
     
     <div class="transaction-box">
         <h1 class="title">TRANSACTIONS</h1>
-        <form action="transaction.php" method="post" class="trans-form">
+        <form action="../admin/transactions/trans_database.php" method="post" class="trans-form">
             <div class="container">
                 <div class="customer">
                     <label for="fname">Customer ID</label>

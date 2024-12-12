@@ -3,87 +3,42 @@ session_start();
 include('../../database_connection.php');
 
 $errorMessage = null;
+$updateMessage = null;
 
+// Ensure the employee is logged in
 if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
     header('Location: ../login.php');
     exit();
 }
 
-$updateMessage = null;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Collect data from the form
+    $selectedSeats = $_POST['selectedSeats'];  // Array of selected seats
+    $payment = $_POST['payment'];
 
-// Add a check for the user role (admin or employee)
-$isAdmin = isset($_SESSION['ROLE']) && $_SESSION['ROLE'] == 'Admin'; // Check if user is admin
+    // Calculate total due amount (assuming each seat costs 150)
+    $seatPrice = 150;
+    $totalDue = count($selectedSeats) * $seatPrice;
+    
+    // Calculate change (assuming payment is greater than or equal to total due)
+    $change = $payment - $totalDue;
 
-function validateInput($trans_number, $trans_due, $trans_payment, $mysqli) {
-    global $errorMessage;
+    // Insert the transaction into the database
+    $insert_sql = "INSERT INTO TRANSACTIONS (TRANS_DUE, TRANS_PAYMENT, TRANS_CHANGE, TRANS_SEATS) 
+               VALUES ('$totalDue', '$payment', '$change', '" . implode(", ", $selectedSeats) . "')";
 
-    // Check for blank fields
-    if (empty($trans_number) || empty($trans_due) || empty($trans_payment)) {
-        $errorMessage = "All fields are required.";
-        return false;
-    }
 
-    // Check for correct data type
-    if (!is_numeric($trans_due) || !is_numeric($trans_payment)) {
-        $errorMessage = "Transaction Due and Payment must be numeric.";
-        return false;
-    }
-
-    // Check for referential integrity
-    $check_foreign_key_sql = "SELECT * FROM TRANSACTIONS WHERE TRANS_NUMBER = '$trans_number'";
-    $result = $mysqli->query($check_foreign_key_sql);
-    if ($result->num_rows === 0) {
-        $errorMessage = "Transaction Number does not exist.";
-        return false;
-    }
-
-    // Check for duplicate records (if applicable)
-    $check_duplicate_sql = "SELECT * FROM TRANSACTIONS WHERE TRANS_NUMBER = '$trans_number' AND TRANS_DUE = '$trans_due' AND TRANS_PAYMENT = '$trans_payment'";
-    $duplicate_result = $mysqli->query($check_duplicate_sql);
-    if ($duplicate_result->num_rows > 0) {
-        $errorMessage = "Duplicate transaction record.";
-        return false;
-    }
-
-    return true;
-}
-
-// Handle the Update functionality
-if (isset($_POST['update'])) {
-    $trans_number = $_POST['trans_number'];
-    $trans_due = $_POST['trans_due'];
-    $trans_payment = $_POST['trans_payment'];
-    $trans_change = $trans_payment - $trans_due;
-
-    if (validateInput($trans_number, $trans_due, $trans_payment, $mysqli)) {
-        $update_sql = "UPDATE TRANSACTIONS 
-                       SET TRANS_DUE = $trans_due, TRANS_PAYMENT = $trans_payment, TRANS_CHANGE = $trans_change 
-                       WHERE TRANS_NUMBER = $trans_number";
-
-        if ($mysqli->query($update_sql)) {
-            $updateMessage = "Transaction updated successfully!";
-        } else {
-            $updateMessage = "Error updating transaction: " . $mysqli->error;
-        }
+    if ($mysqli->query($insert_sql)) {
+        $updateMessage = "Transaction added successfully!";
+    } else {
+        $updateMessage = "Error adding transaction: " . $mysqli->error;
     }
 }
 
-// Fetch data for display
-$sql = "SELECT T.TRANS_NUMBER, T.TRANS_DUE, T.TRANS_PAYMENT, T.TRANS_CHANGE, T.TRANS_DATE, T.EMP_ID, 
-               E.EMP_FNAME, E.EMP_LNAME
-        FROM TRANSACTIONS T
-        JOIN EMPLOYEE E ON T.EMP_ID = E.EMP_ID";
+// Fetch transaction data to display
+$sql = "SELECT T.TRANS_NUMBER, T.TRANS_DUE, T.TRANS_PAYMENT, T.TRANS_CHANGE, T.TRANS_SEATS
+        FROM TRANSACTIONS T";
 $result = $mysqli->query($sql);
-
-// Redirect based on user role (admin or employee)
-if ($isAdmin) {
-
-} else {
-    // Employee is redirected to ticket.html
-    header('Location: ../../transaction/tickets/tickets.html');
-    exit();
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -394,17 +349,14 @@ if ($isAdmin) {
                 <th>Transaction Due</th>
                 <th>Transaction Payment</th>
                 <th>Transaction Change</th>
-                <th>Transaction Date</th>
-                <th>Employee</th>
-            </tr>
+                <th>Transaction Seats</th>            </tr>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['TRANS_NUMBER']); ?></td>
                     <td><?php echo htmlspecialchars($row['TRANS_DUE']); ?></td>
                     <td><?php echo htmlspecialchars($row['TRANS_PAYMENT']); ?></td>
                     <td><?php echo htmlspecialchars($row['TRANS_CHANGE']); ?></td>
-                    <td><?php echo htmlspecialchars($row['TRANS_DATE']); ?></td>
-                    <td><?php echo htmlspecialchars($row['EMP_FNAME'] . ' ' . $row['EMP_LNAME']); ?></td>
+                    <td><?php echo htmlspecialchars($row['TRANS_SEATS']); ?></td>
                 </tr>
             <?php endwhile; ?>
         </table>

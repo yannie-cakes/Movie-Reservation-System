@@ -8,7 +8,6 @@ $MOV_NAME = '';
 $MOV_LENGTH = '';
 $MOV_GENRE = '';
 $MOV_RATING = '';
-$MOV_PRICE = '';
 $CIN_ID = '';
 $MOV_ID = '';
 
@@ -17,23 +16,18 @@ if (isset($_POST['insert'])) {
     $MOV_LENGTH = $_POST['mname'];
     $MOV_GENRE = $_POST['genre'];
     $MOV_RATING = $_POST['rating'];
-    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : '';
     $CIN_ID = $_POST['cinema'];
     $MOV_DATE = $_POST['mov_date'];
 
     $errorMessage = null;
 
     // Validate inputs
-    if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($MOV_PRICE) || empty($CIN_ID) || empty($MOV_DATE)) {
+    if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($CIN_ID) || empty($MOV_DATE)) {
         $errorMessage = "All fields are required. Please fill in all the fields.";
     }
 
     if (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $MOV_LENGTH)) {
         $errorMessage = "Invalid movie length: Please use the format HH:MM:SS.";
-    }
-
-    if (!is_numeric($MOV_PRICE) || $MOV_PRICE < 0) {
-        $errorMessage = "Invalid price: Please enter a valid number for the price.";
     }
 
     if (!is_numeric($CIN_ID) || $CIN_ID < 0) {
@@ -70,8 +64,8 @@ if (isset($_POST['insert'])) {
     // Insert data if no errors
     if (!$errorMessage) {
         $MOV_LENGTH = "'$MOV_LENGTH'";
-        $sql = "INSERT INTO movie_reservation_system.MOVIE (MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID, MOV_DATE) 
-                VALUES ('$MOV_NAME', $MOV_LENGTH, '$MOV_GENRE', '$MOV_RATING', '$MOV_PRICE', $CIN_ID, '$MOV_DATE')";
+        $sql = "INSERT INTO movie_reservation_system.MOVIE (MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, CIN_ID, MOV_DATE) 
+                VALUES ('$MOV_NAME', $MOV_LENGTH, '$MOV_GENRE', '$MOV_RATING', $CIN_ID, '$MOV_DATE')";
         if ($mysqli->query($sql)) {
             echo "<div style='color: green;'>Movie added successfully!</div>";
         } else {
@@ -86,7 +80,6 @@ if (isset($_POST['update'])) {
     $MOV_LENGTH = $_POST['mname'];
     $MOV_GENRE = $_POST['genre'];
     $MOV_RATING = $_POST['rating'];
-    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : '';
     $CIN_ID = $_POST['cinema'];
     $MOV_DATE = $_POST['mov_date'];
     $MOV_ID = $_POST['id'];
@@ -94,12 +87,10 @@ if (isset($_POST['update'])) {
     $errorMessage = null;
 
     // Validate inputs
-    if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($MOV_PRICE) || empty($CIN_ID) || empty($MOV_DATE) || empty($MOV_ID)) {
+    if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($CIN_ID) || empty($MOV_DATE) || empty($MOV_ID)) {
         $errorMessage = "All fields are required. Please fill in all the fields.";
     } elseif (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $MOV_LENGTH)) {
         $errorMessage = "Invalid movie length: Please use the format HH:MM:SS.";
-    } elseif (!is_numeric($MOV_PRICE) || $MOV_PRICE < 0) {
-        $errorMessage = "Invalid price: Please enter a valid number for the price.";
     } elseif (!is_numeric($CIN_ID) || $CIN_ID < 0) {
         $errorMessage = "Invalid cinema number: Please enter a valid number for the cinema number.";
     } elseif (strlen($MOV_ID) !== 8 || !ctype_digit($MOV_ID)) {
@@ -127,7 +118,7 @@ if (isset($_POST['update'])) {
     // Update the database if no errors
     if (!$errorMessage) {
         $sql = "UPDATE movie_reservation_system.MOVIE 
-                SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', MOV_PRICE='$MOV_PRICE', CIN_ID='$CIN_ID', MOV_DATE='$MOV_DATE' 
+                SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', CIN_ID='$CIN_ID', MOV_DATE='$MOV_DATE' 
                 WHERE MOV_ID='$MOV_ID'";
 
         if ($mysqli->query($sql)) {
@@ -170,7 +161,7 @@ if (isset($_POST['delete'])) {
 }
 
 // Display existing movies from the database
-$sql = "SELECT MOV_ID, MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID FROM MOVIE";
+$sql = "SELECT MOV_ID, MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, CIN_ID FROM MOVIE";
 $result = $mysqli->query($sql);
 ?>
 
@@ -257,7 +248,7 @@ $result = $mysqli->query($sql);
                 </select>
             </div>
 
-            <div class="input">
+            <class="input">
                 <label for="rating">Movie Rating</label>
                 <select name="rating" id="rating">
                     <option value="G">G</option>
@@ -267,11 +258,6 @@ $result = $mysqli->query($sql);
                     <option value="R-18">R-18</option>
                     <option value="X">X</option>
                 </select>
-            </div>
-
-            <div class="input">
-                <label for="price">Movie Price</label>
-                <input type="text" name="price">
             </div>
 
             <div class="input">
