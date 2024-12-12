@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
             header('Location: ../admin/emp_database/emp_database.php');
             exit();
         } else if ($row['EMP_ROLE'] === 'Employee') {
-            header('Location: ../employee/movies/movie_database.php');
+            header('Location: ../main/main.php');
             exit();
         }
     } else {

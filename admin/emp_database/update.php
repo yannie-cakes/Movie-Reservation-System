@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../database_connection.php');
+include('../../database_connection.php');
 
 $EMP_ID = $_GET['id'] ?? null;
 $errorMessage = null;

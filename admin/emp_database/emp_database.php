@@ -1,6 +1,6 @@
 <?php
 session_start();
-include ('../database_connection.php');
+include ('../../database_connection.php');
 
 $errorMessage = null;
 
@@ -85,7 +85,7 @@ $result = $mysqli->query($sql);
                 <h3 class="tab-label">Employees</h3>
             </div>
         </a>
-        <a href="">
+        <a href="../transactions/trans_database.php">
             <div class="tab">
                 <i class="bi bi-bank2"></i>
                 <h3 class="tab-label">Transactions</div>
@@ -99,7 +99,7 @@ $result = $mysqli->query($sql);
         </a>
 
         <h4 class="label">Account Options</h4>
-        <a href="logout.php">
+        <a href="../../login/logout.php">
             <div class="tab">
                 <i class="bi bi-box-arrow-left"></i>
                 <h3 class="tab-label">Log Out</h3>

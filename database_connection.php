@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost:3310";
 $username = "root";
-$password = "midnightsonatine"; // Please change the password as per your machine
+$password = "balagtas2csa"; // Please change the password as per your machine
 $dbname = "movie_reservation_system";
 
 // Create a connection to the MySQL database

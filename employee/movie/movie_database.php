@@ -276,8 +276,9 @@ $result = $mysqli->query($sql);
 
             <div class="input">
                 <label for="mov_date">Movie Date</label>
-                <input type="date" name="mov_date">
+                <input type="date" name="mov_date" min="<?php echo date('Y-m-d'); ?>">
             </div>
+
 
 
             <div class="input">

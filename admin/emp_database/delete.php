@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../database_connection.php');
+include('../../database_connection.php');
 
 if (!isset($_SESSION['EMP_FNAME']) || !isset($_SESSION['EMP_ID'])) {
     header('Location: ../login.php');

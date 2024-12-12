@@ -197,7 +197,7 @@ $result = $mysqli->query($sql);
         margin-right: auto;
     }
 
-    .title{
+    h1{
         margin: 0;
         font-family: var(--main-font);
         font-size: 30px;
