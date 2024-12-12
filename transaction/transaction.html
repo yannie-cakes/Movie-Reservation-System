@@ -64,43 +64,11 @@
                 <div class="payment-details">
                     <label for="seats">Seats</label>
                     <table name="seats">
-                        <?php
-                            if (isset($_GET['trans_number'])) {
-                                $transNumber = $_GET['trans_number'];
-
-                                // Fetch transaction details from the database based on transaction number
-                                $query = "SELECT TICKET.SEAT_ID, TRANSACTIONS.TRANS_PAYMENT, TRANSACTIONS.TRANS_CHANGE
-                                          FROM TICKET
-                                          INNER JOIN TRANSACTIONS ON TICKET.TRANS_NUMBER = TRANSACTIONS.TRANS_NUMBER
-                                          WHERE TRANSACTIONS.TRANS_NUMBER = ?";
-                                $stmt = $mysqli->prepare($query);
-                                $stmt->bind_param("i", $transNumber);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<tr><td>" . $row['SEAT_ID'] . "</td></tr>";
-                                    }
-
-                                    // Get the total payment and change for display
-                                    $row = $result->fetch_assoc();
-                                    $totalPrice = $row['TRANS_PAYMENT'];
-                                    $change = $row['TRANS_CHANGE'];
-                                } else {
-                                    echo "<tr><td>No seats reserved for this transaction.</td></tr>";
-                                }
-                            }
-                        ?>
                     </table>
+                    <a href="seats.html">View Reserved Seats</a>
 
                     <label for="price">Total Price</label>
                     <p name="price">
-                        <?php
-                            if (isset($totalPrice)) {
-                                echo "₱" . $totalPrice; // Display the total price
-                            }
-                        ?>
                     </p>
 
                     <label for="payment">Total Payment</label>
@@ -108,11 +76,6 @@
 
                     <label for="change">Total Change</label>
                     <p name="change">
-                        <?php
-                            if (isset($change)) {
-                                echo "₱" . $change; // Display the change
-                            }
-                        ?>
                     </p>
                 </div>  
             </div>

@@ -1,0 +1,180 @@
+
+:root{
+    --light-blue: #CEDEF0;
+    --purple: #9D9AD9;
+    --dark-blue: #6B9BD1;
+}
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body{
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 20% 80%;
+    overflow: hidden
+}
+
+  
+  
+  /*nav-bar style*/
+.nav-bar{
+    height: 100vh;
+    box-shadow: 0 4px 10px 4px rgb(0 0 0 / 0.5);
+}
+
+.profile{
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.avatar{
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    background-color: var(--light-blue);
+}
+
+.emp-name{
+    font-family: var(--main-font);
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.emp-id, .label{
+    font-family: var(--main-font);
+    font-size: 14px;
+    margin-top: 5px;
+    color: gray;
+}
+
+.label{
+    margin: 20px;
+    margin-top: 20px;
+}
+
+.tab{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 30px;   
+}
+
+.bi {
+    font-size: 30px; 
+    line-height: 30px; 
+    width: 30px; 
+    height: 30px; 
+    display: inline-block; 
+    text-align: center;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+.tab-label{
+    font-family: var(--main-font);
+    font-size: 18px;
+}
+
+a:hover{
+    color: var(--dark-blue);
+}
+
+.tab:hover{
+    background-color: var(--light-blue);
+    border-left: 5px solid var(--dark-blue);
+    color: var(--dark-blue);
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 20px 0 20px;
+}
+
+.tab:focus{
+    background-color: var(--light-blue);
+    border-left: 5px solid var(--dark-blue);
+    color: var(--dark-blue);
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 20px 0 20px;
+}
+s
+body {
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 20% 80%;
+    overflow: hidden;
+}
+
+/* Movie Ticket Receipt Style */
+.receipt {
+    grid-column: 2 / 3;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px 4px rgb(0 0 0 / 0.1);
+    margin: 20px;
+    border-radius: 8px;
+    font-family: var(--main-font);
+    width:50%;
+    position:relative;
+    left:200px;
+    height:80%;
+   
+}
+
+.receipt h2 {
+    font-size: 24px;
+    color: var(--dark-blue);
+}   
+
+.receipt .detail {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 0;
+}
+
+.receipt .detail span {
+    font-size: 16px;
+    color: gray;
+}
+
+.receipt .total {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: var(--dark-blue);
+}
+/* Back Button Style */
+.back-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: var(--dark-blue);
+    color: white;
+    font-family: var(--main-font);
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    
+}
+
+.back-btn:hover {
+     background-color: #9D9AD9;
+}
