@@ -8,6 +8,12 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
     header('Location: ../login.php');
     exit();
 }
+
+if (isset($_GET['cin_id'])) {
+   $_SESSION['cin_id'] = $_GET['cin_id']; // Store CIN_ID in session
+} else {
+    echo 'CIN_ID is missing.';
+}
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +40,7 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
                         echo htmlspecialchars($_SESSION['EMP_LNAME']);
                         ?>
                     </h4>
-            </div>
+            </div>  
         </div>
         <h4 class="label">Actions</h4>
             <a href="../main/main.php ">
@@ -60,15 +66,15 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
         <form action="../admin/transactions/trans_database.php" method="post" class="trans-form">
             <div class="container">
                 <div class="customer">
-                    <label for="fname">Customer ID</label>
-                    <p>Customer ID: </p>
+                    <label for="fname">Cin ID</label>
+                    <p><?php echo htmlspecialchars($_SESSION['cin_id'])?></p>
                 </div>
                 <div class="payment-details">
                     <label for="seats">Seats</label>
                     <table id="seats-table" border="1">
                         <!-- Dynamically populated rows -->
-                        <button type="button" class="reserve-seats-btn" onclick="window.location.href='seats/seats.html';">Reserve Seats</button>
-                    </table>
+                        <button type="button" class="reserve-seats-btn" onclick="window.location.href='seats/seats.php?cin_id=<?php echo $_SESSION['cin_id']; ?>'">Reserve Seats</button>
+                        </table>
                     <br>
                     <label for="price">Total Price</label>
                     <p id="total-price">0</p>
@@ -82,7 +88,7 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
             </div>
             <input type="submit" value="Confirm">
         </form>
-        
+     
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const seats = JSON.parse(localStorage.getItem("selectedSeats")) || [];

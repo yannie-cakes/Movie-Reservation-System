@@ -64,8 +64,8 @@ if (isset($_POST['insert'])) {
     // Insert data if no errors
     if (!$errorMessage) {
         $MOV_LENGTH = "'$MOV_LENGTH'";
-        $sql = "INSERT INTO movie_reservation_system.MOVIE (MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, CIN_ID, MOV_DATE) 
-                VALUES ('$MOV_NAME', $MOV_LENGTH, '$MOV_GENRE', '$MOV_RATING', $CIN_ID, '$MOV_DATE')";
+        $sql = "INSERT INTO movie_reservation_system.MOVIE (MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID, MOV_DATE) 
+                VALUES ('$MOV_NAME', $MOV_LENGTH, '$MOV_GENRE', '$MOV_RATING', 150, $CIN_ID, '$MOV_DATE')";
         if ($mysqli->query($sql)) {
             echo "<div style='color: green;'>Movie added successfully!</div>";
         } else {
@@ -74,7 +74,7 @@ if (isset($_POST['insert'])) {
     } else {
         echo "<div style='color: red;'>$errorMessage</div>";
     }
-}else // Update Operation
+} else // Update Operation
 if (isset($_POST['update'])) {
     $MOV_NAME = $mysqli->real_escape_string($_POST['fname']);
     $MOV_LENGTH = $_POST['mname'];
@@ -118,7 +118,7 @@ if (isset($_POST['update'])) {
     // Update the database if no errors
     if (!$errorMessage) {
         $sql = "UPDATE movie_reservation_system.MOVIE 
-                SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', CIN_ID='$CIN_ID', MOV_DATE='$MOV_DATE' 
+                SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', MOV_PRICE=150, CIN_ID='$CIN_ID', MOV_DATE='$MOV_DATE' 
                 WHERE MOV_ID='$MOV_ID'";
 
         if ($mysqli->query($sql)) {
@@ -161,7 +161,7 @@ if (isset($_POST['delete'])) {
 }
 
 // Display existing movies from the database
-$sql = "SELECT MOV_ID, MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, CIN_ID FROM MOVIE";
+$sql = "SELECT MOV_ID, MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID FROM MOVIE";
 $result = $mysqli->query($sql);
 ?>
 
@@ -191,21 +191,22 @@ $result = $mysqli->query($sql);
             </div>
         </div>
         <h4 class="label">Databases</h4>
-        <a href="">
+        <a href="../../admin/emp_database/emp_database.php">
             <div class="tab">
                 <i class="bi bi-film"></i>
+                <h3 class="tab-label">Employees</h3>
+            </div>
+        </a>
+        <a href="">
+            <div class="tab">
+                <i class="bi bi-bank2"></i>
                 <h3 class="tab-label">Movies</h3>
             </div>
         </a>
-        <a href="../transactions/trans_database.php">
+        
+        <a href="">
             <div class="tab">
                 <i class="bi bi-bank2"></i>
-                <h3 class="tab-label">Transactions</h3>
-            </div>
-        </a>
-        <a href="../tickets/tickets.php">
-            <div class="tab">
-                <i class="bi bi-ticket-perforated-fill"></i>
                 <h3 class="tab-label">Tickets</h3>
             </div>
         </a>
@@ -248,7 +249,7 @@ $result = $mysqli->query($sql);
                 </select>
             </div>
 
-            <class="input">
+            <div class="input">
                 <label for="rating">Movie Rating</label>
                 <select name="rating" id="rating">
                     <option value="G">G</option>
@@ -264,7 +265,6 @@ $result = $mysqli->query($sql);
                 <label for="mov_date">Movie Date</label>
                 <input type="date" name="mov_date" min="<?php echo date('Y-m-d'); ?>">
             </div>
-
 
 
             <div class="input">

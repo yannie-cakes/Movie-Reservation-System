@@ -85,10 +85,10 @@ $result = $mysqli->query($sql);
                 <h3 class="tab-label">Employees</h3>
             </div>
         </a>
-        <a href="../transactions/trans_database.php">
+        <a href="../../employee/movie/movie_database.php">
             <div class="tab">
                 <i class="bi bi-bank2"></i>
-                <h3 class="tab-label">Transactions</div>
+                <h3 class="tab-label">Movies</div>
             </div>
         </a>
         <a href="">

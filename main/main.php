@@ -39,7 +39,7 @@ $result = $mysqli->query($sql);
                         ?>
                     </h3>
                     <h4 class="emp-id"><?php
-                        echo htmlspecialchars($_SESSION['EMP_LNAME']);
+                        echo htmlspecialchars(string: $_SESSION['EMP_LNAME']);
                         ?>
                     </h4>
                 </div>
@@ -53,7 +53,7 @@ $result = $mysqli->query($sql);
             </a>
 
             <h4 class="label">Account Options</h4>
-            <a href="../../login/logout.php">
+            <a href="../login/logout.php">
                 <div class="tab">
                     <i class="bi bi-box-arrow-left"></i>
                     <h3 class="tab-label">Log Out</h3>
@@ -73,7 +73,6 @@ $result = $mysqli->query($sql);
         <thead>
           <tr>
             <th>Movie Name</th>
-            <th>Seats Left</th>
             <th>Price</th>
             <th>Cinema</th>
           </tr>
@@ -83,8 +82,7 @@ $result = $mysqli->query($sql);
             // Loop through the result set and display each movie
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td><a href='../transaction/transaction.php' class='action-link'>" . htmlspecialchars($row['MOV_NAME']) . "</a></td>";
-                echo "<td>30</td>"; // Placeholder for seats left, you can adjust as per your requirement
+                echo '<td><a href="../transaction/transaction.php?cin_id=' . $row['CIN_ID'] . '">' . htmlspecialchars($row['MOV_NAME']) . '</a></td>';
                 echo "<td>" . htmlspecialchars($row['MOV_PRICE']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['CIN_ID']) . "</td>";
                 echo "</tr>";
