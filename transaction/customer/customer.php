@@ -1,19 +1,23 @@
 <?php 
 include("../database_connection.php");
 
-$sql = "SELECT MAX(CUS_NUMBER) AS cus_id FROM CUSTOMER";
-$result = $conn->query($sql);
+$trans_number = $_POST['trans_number'];
 
-$response = array();
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $response['cus_id'] = $row['cus_id'] + 1; // Incrementing for next ID
+$sql = "INSERT INTO CUSTOMER (TRANS_NUMBER) VALUES (?)";
+
+$stmt = $mysqli->prepare($sql);
+
+$stmt->bind_param("i", $trans_number);
+
+if ($stmt->execute()) {
+    $cus_number = $stmt->insert_id;
+
+    echo json_encode(['cus_id' => $cus_number]);
 } else {
-    $response['cus_id'] = 1; // Default first ID
+    echo json_encode(['error' => 'Failed to insert customer']);
 }
 
-echo json_encode($response);
-
+$stmt->close();
 $mysqli->close();
 
 ?>
