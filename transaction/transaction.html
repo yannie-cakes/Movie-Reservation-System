@@ -51,23 +51,15 @@
         <form action="transaction.php" method="post" class="trans-form">
             <div class="container">
                 <div class="customer">
-                    <label for="fname">Customer First Name</label>
-                    <input type="text" name="fname" placeholder=" Enter first name..." required>
-        
-                    <label for="mname">Customer Middle Name</label>
-                    <input type="text" name="mname" placeholder=" Enter middle name..." required>
-        
-                    <label for="lname">Customer Last Name</label>
-                    <input type="text" name="lname" placeholder=" Enter last name..." required>
+                    <label for="fname">Customer ID</label>
+                    <p>Customer ID: </p>
                 </div>
                 <div class="payment-details">
                     <label for="seats">Seats</label>
                     <table id="seats-table" border="1">
                         <!-- Dynamically populated rows -->
+                        <button type="button" class="reserve-seats-btn" onclick="window.location.href='seats.html';">Reserve Seats</button>
                     </table>
-
-                    <!-- Add button for reserving seats -->
-                    <button type="button" class="reserve-seats-btn" onclick="window.location.href='seats.html';">Reserve Seats</button>
 
                     <label for="price">Total Price</label>
                     <p id="total-price">0</p>
@@ -108,10 +100,6 @@
                     form.appendChild(input);
                 });
             });
-        
-            // Calculate total price based on selected seats
-            const seatPrice = 150; // Example price
-            document.getElementById('total-price').textContent = seats.length * seatPrice;
         
             // Fetch the latest customer ID
             fetch('fetch_customer_id.php')

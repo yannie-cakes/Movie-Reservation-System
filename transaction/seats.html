@@ -87,34 +87,35 @@
         });        
     </script>
     <script>
+        // Retrieve and highlight previously selected seats from localStorage
         document.addEventListener("DOMContentLoaded", () => {
-            const selectedSeats = new Set();
+            const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || [];
+
+            selectedSeats.forEach(seatId => {
+                const seatCheckbox = document.getElementById(seatId);
+                if (seatCheckbox) {
+                    seatCheckbox.checked = true;
+                }
+            });
 
             // Handle seat selection
             document.getElementById("seats-container").addEventListener("change", (event) => {
                 const seat = event.target;
+                const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || [];
+
                 if (seat.type === "checkbox") {
                     if (seat.checked) {
-                        selectedSeats.add(seat.value);
+                        selectedSeats.push(seat.value);
                     } else {
-                        selectedSeats.delete(seat.value);
+                        const index = selectedSeats.indexOf(seat.value);
+                        if (index !== -1) {
+                            selectedSeats.splice(index, 1);
+                        }
                     }
                 }
-            });
 
-            // Store selected seats and redirect
-            document.querySelector(".seats-form").addEventListener("submit", (event) => {
-                event.preventDefault();
-
-                if (selectedSeats.size === 0) {
-                    alert("Please select at least one seat!");
-                    return;
-                }
-
-                localStorage.setItem("selectedSeats", JSON.stringify([...selectedSeats]));
-
-                // Redirect to transaction.html
-                window.location.href = "transaction.html";
+                // Save selected seats to localStorage
+                localStorage.setItem("selectedSeats", JSON.stringify(selectedSeats));
             });
         });
     </script>
