@@ -2,6 +2,8 @@
     --light-blue: #CEDEF0;
     --purple: #9D9AD9;
     --dark-blue: #6B9BD1;
+    --unchecked-green: #22a722;
+    --checked-red: #b81c1c;
 }
 
 body {
@@ -13,7 +15,7 @@ body {
         "nav-bar cinema-image"
         "nav-bar seat-selection";
     grid-template-columns: 20% 80%;
-    grid-template-rows: 50% 50%;
+    grid-template-rows: 20% 70%;
     overflow: hidden;
 }
 
@@ -98,63 +100,13 @@ a:hover {
     margin-right: 0;
     padding: 0 20px 0 20px;
 }
-
-/* Cinema image styles */
-.cinema-image {
-    grid-area: cinema-image;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-.cinema-image img {
-    width: 100%;
-    height: 100%;
- 
-}
-#seat-selection {
-  
-
-    border: 1px solid #ccc;
-    width: 10%;
-   
-    background-color: #f4f4f4;
-}
-
-.seat-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-}
-
-.seat-column {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; /* Makes this column scrollable */
-    max-height: 300px; /* Set a max-height to allow scrolling when needed */
-    padding-right: 10px; /* Adds padding to the right to prevent scrollbar overlap */
-}
-
-.seat-row label {
-    font-size: 16px;
-    margin-bottom: 5px;
-    margin-right: 10px;
-}
-
-#confirm-seats {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-}
-
-#confirm-seats:hover {
-    background-color: #45a049;
+:root {
+    --light-blue: #CEDEF0;
+    --purple: #9D9AD9;
+    --dark-blue: #6B9BD1;
+    --gray: #E0E0E0;
+    --seat-hover: #B0C4DE;
+    --screen-color: #D43F3A;
 }
 
 body {
@@ -163,46 +115,92 @@ body {
     width: 100vw;
     display: grid;
     grid-template-areas: 
-    "nav-bar cinema-image"
-    "nav-bar seat-selection";
+        "nav-bar cinema-image"
+        "nav-bar seat-selection";
     grid-template-columns: 20% 80%;
-    grid-template-rows: 50% 50%;
+    grid-template-rows: 20% 70%;
     overflow: hidden;
 }
-/* Seat Selection Container */
+
+/* Seat Selection Styles */
 .seat-selection {
-    width: 100%; /* Makes the container stretch across the available width */
-    height: 100%; /* Set a fixed height, adjust as needed */
-    margin: 0 auto; /* Centers the container horizontally */
-    background-color: #f4f4f4;
-    margin-top: -30px;
-    padding: 10px; /* Optional: adds some padding inside the container */
-    overflow-y: auto; /* Adds a scrollbar when content overflows vertically */
-    box-sizing: border-box; /* Ensures padding is included in height/width calculations */
+    grid-area: seat-selection;
+    padding: 20px;
+    overflow-y: auto;
 }
 
-/* Seat Row styles */
+.screen {
+    background-color: var(--screen-color);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.seating-grid {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 10px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 10px;
+    justify-items: center;
+}
+
+/* Seat Selection styles */
+.seat-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    background-color: #f4f4f4;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
 .seat-row {
     display: flex;
+    gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 5px; /* Adds space between checkboxes */
-    margin-bottom: 5px; /* Reduce the gap between rows */
-    text-align: center;
-    flex-grow: 1; /* Allow rows to grow to fit the available width */
+    justify-content: center;
 }
 
-/* Individual Seat styling */
+/* Button-like checkboxes */
 .seat-row input[type="checkbox"] {
-    margin-right: 5px; /* Reduce the space between checkboxes */
+    display: none;
 }
 
-/* Seat Label styling */
 .seat-row label {
-    font-size: 10px; /* Adjust label size */
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: var(--unchecked-green);
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
 }
 
-/* Adjust for each row of seats */
-.row {
-    margin-bottom: 5px; /* Reduce margin between rows */
+.seat-row input[type="checkbox"]:checked + label {
+    background-color: var(--checked-red);
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(255, 0, 0, 0.4);
 }
