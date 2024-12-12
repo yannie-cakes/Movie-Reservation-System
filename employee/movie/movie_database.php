@@ -17,21 +17,21 @@ if (isset($_POST['insert'])) {
     $MOV_LENGTH = $_POST['mname'];
     $MOV_GENRE = $_POST['genre'];
     $MOV_RATING = $_POST['rating'];
-    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : ''; // Ensure MOV_PRICE is set
+    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : '';
     $CIN_ID = $_POST['cinema'];
-    $MOV_DATE = $_POST['mov_date']; // Assuming you're getting the movie date as a POST parameter
+    $MOV_DATE = $_POST['mov_date'];
 
-    // e. Check if required fields are blank
+    $errorMessage = null;
+
+    // Validate inputs
     if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($MOV_PRICE) || empty($CIN_ID) || empty($MOV_DATE)) {
         $errorMessage = "All fields are required. Please fill in all the fields.";
     }
 
-    // b. Validate MOV_LENGTH (HH:MM:SS format)
     if (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $MOV_LENGTH)) {
         $errorMessage = "Invalid movie length: Please use the format HH:MM:SS.";
     }
 
-    // a. Validate MOV_PRICE (should be numeric)
     if (!is_numeric($MOV_PRICE) || $MOV_PRICE < 0) {
         $errorMessage = "Invalid price: Please enter a valid number for the price.";
     }
@@ -40,7 +40,7 @@ if (isset($_POST['insert'])) {
         $errorMessage = "Invalid cinema number: Please enter a valid number for the cinema number.";
     }
 
-    // c. Check if CIN_ID exists in Cinema table (foreign key integrity)
+    // Foreign key integrity
     if (!$errorMessage) {
         $cinemaCheckSql = "SELECT CIN_ID FROM CINEMA WHERE CIN_ID = $CIN_ID LIMIT 1";
         $cinemaResult = $mysqli->query($cinemaCheckSql);
@@ -49,7 +49,7 @@ if (isset($_POST['insert'])) {
         }
     }
 
-    // d. Check if the movie already exists (duplicate check)
+    // Duplicate check
     if (!$errorMessage) {
         $checkDuplicateSql = "SELECT * FROM MOVIE WHERE MOV_NAME = '$MOV_NAME' AND MOV_LENGTH = '$MOV_LENGTH' AND MOV_GENRE = '$MOV_GENRE' LIMIT 1";
         $checkResult = $mysqli->query($checkDuplicateSql);
@@ -58,7 +58,7 @@ if (isset($_POST['insert'])) {
         }
     }
 
-    // f. Check if a movie is already scheduled in the same cinema for the same day
+    // Schedule conflict check
     if (!$errorMessage) {
         $checkScheduleSql = "SELECT * FROM MOVIE WHERE CIN_ID = $CIN_ID AND MOV_DATE = '$MOV_DATE' LIMIT 1";
         $scheduleResult = $mysqli->query($checkScheduleSql);
@@ -67,187 +67,107 @@ if (isset($_POST['insert'])) {
         }
     }
 
-    // Proceed with inserting the data if no error messages
+    // Insert data if no errors
     if (!$errorMessage) {
-        $MOV_LENGTH = "'$MOV_LENGTH'"; // wrap MOV_LENGTH in quotes for SQL query
-
+        $MOV_LENGTH = "'$MOV_LENGTH'";
         $sql = "INSERT INTO movie_reservation_system.MOVIE (MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID, MOV_DATE) 
                 VALUES ('$MOV_NAME', $MOV_LENGTH, '$MOV_GENRE', '$MOV_RATING', '$MOV_PRICE', $CIN_ID, '$MOV_DATE')";
-
         if ($mysqli->query($sql)) {
             echo "<div style='color: green;'>Movie added successfully!</div>";
         } else {
             echo "<div style='color: red;'>Error: " . $mysqli->error . "</div>";
         }
-    }
-
-    if ($errorMessage) {
+    } else {
         echo "<div style='color: red;'>$errorMessage</div>";
     }
-}else if (isset($_POST['update'])) {
-    
+}else // Update Operation
+if (isset($_POST['update'])) {
     $MOV_NAME = $mysqli->real_escape_string($_POST['fname']);
     $MOV_LENGTH = $_POST['mname'];
     $MOV_GENRE = $_POST['genre'];
     $MOV_RATING = $_POST['rating'];
-    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : ''; // Ensure MOV_PRICE is set
+    $MOV_PRICE = isset($_POST['price']) ? $_POST['price'] : '';
     $CIN_ID = $_POST['cinema'];
-    $MOV_DATE = $_POST['mov_date']; // Assuming you're getting the movie date as a POST parameter
+    $MOV_DATE = $_POST['mov_date'];
     $MOV_ID = $_POST['id'];
 
-    // e. Check if required fields are blank
+    $errorMessage = null;
+
+    // Validate inputs
     if (empty($MOV_NAME) || empty($MOV_LENGTH) || empty($MOV_GENRE) || empty($MOV_RATING) || empty($MOV_PRICE) || empty($CIN_ID) || empty($MOV_DATE) || empty($MOV_ID)) {
         $errorMessage = "All fields are required. Please fill in all the fields.";
+    } elseif (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $MOV_LENGTH)) {
+        $errorMessage = "Invalid movie length: Please use the format HH:MM:SS.";
+    } elseif (!is_numeric($MOV_PRICE) || $MOV_PRICE < 0) {
+        $errorMessage = "Invalid price: Please enter a valid number for the price.";
+    } elseif (!is_numeric($CIN_ID) || $CIN_ID < 0) {
+        $errorMessage = "Invalid cinema number: Please enter a valid number for the cinema number.";
+    } elseif (strlen($MOV_ID) !== 8 || !ctype_digit($MOV_ID)) {
+        $errorMessage = "Invalid MOV_ID: Must be an 8-digit number.";
+    }
+
+    // Check if CIN_ID exists in the database
+    if (!$errorMessage) {
+        $cinemaCheckSql = "SELECT CIN_ID FROM CINEMA WHERE CIN_ID = $CIN_ID LIMIT 1";
+        $cinemaResult = $mysqli->query($cinemaCheckSql);
+        if ($cinemaResult->num_rows == 0) {
+            $errorMessage = "The selected cinema does not exist in the database.";
+        }
+    }
+
+    // Check if the record to update exists
+    if (!$errorMessage) {
+        $origin = "SELECT * FROM movie_reservation_system.MOVIE WHERE MOV_ID = '$MOV_ID'";
+        $result = $mysqli->query($origin);
+        if ($result->num_rows === 0) {
+            $errorMessage = "The record to update does not exist.";
+        }
+    }
+
+    // Update the database if no errors
+    if (!$errorMessage) {
+        $sql = "UPDATE movie_reservation_system.MOVIE 
+                SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', MOV_PRICE='$MOV_PRICE', CIN_ID='$CIN_ID', MOV_DATE='$MOV_DATE' 
+                WHERE MOV_ID='$MOV_ID'";
+
+        if ($mysqli->query($sql)) {
+            echo "<div style='color: green;'>Data updated successfully!</div>";
+        } else {
+            echo "<div style='color: red;'>Error: " . $mysqli->error . "</div>";
+        }
+    } else {
         echo "<div style='color: red;'>$errorMessage</div>";
-    }else{
-        // b. Validate MOV_LENGTH (HH:MM:SS format)
-        if (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $MOV_LENGTH)) {
-            $errorMessage = "Invalid movie length: Please use the format HH:MM:SS.";
-            echo "<div style='color: red;'>$errorMessage</div>";
-        }
-
-        // a. Validate MOV_PRICE (should be numeric)
-        if (!is_numeric($MOV_PRICE) || $MOV_PRICE < 0) {
-            $errorMessage = "Invalid price: Please enter a valid number for the price.";
-            echo "<div style='color: red;'>$errorMessage</div>";
-        }
-
-        if (!is_numeric($CIN_ID) || $CIN_ID < 0) {
-            $errorMessage = "Invalid cinema number: Please enter a valid number for the cinema number.";
-            echo "<div style='color: red;'>$errorMessage</div>";
-        }
-
-        // c. Check if CIN_ID exists in Cinema table (foreign key integrity)
-        if (!$errorMessage) {
-            $cinemaCheckSql = "SELECT CIN_ID FROM CINEMA WHERE CIN_ID = $CIN_ID LIMIT 1";
-            $cinemaResult = $mysqli->query($cinemaCheckSql);
-            if ($cinemaResult->num_rows == 0) {
-                $errorMessage = "The selected cinema does not exist in the database.";
-                echo "<div style='color: red;'>$errorMessage</div>";
-            }
-        }
-
-        // d. Check if the movie already exists (duplicate check)
-        if (!$errorMessage) {
-            $checkDuplicateSql = "SELECT * FROM MOVIE WHERE MOV_NAME = '$MOV_NAME' AND MOV_LENGTH = '$MOV_LENGTH' AND MOV_GENRE = '$MOV_GENRE' LIMIT 1";
-            $checkResult = $mysqli->query($checkDuplicateSql);
-            if ($checkResult->num_rows > 0) {
-                $errorMessage = "This movie already exists in the database.";
-                echo "<div style='color: red;'>$errorMessage</div>";
-            }
-        }
-
-        // f. Check if a movie is already scheduled in the same cinema for the same day
-        if (!$errorMessage) {
-            $checkScheduleSql = "SELECT * FROM MOVIE WHERE CIN_ID = $CIN_ID AND MOV_DATE = '$MOV_DATE' LIMIT 1";
-            $scheduleResult = $mysqli->query($checkScheduleSql);
-            if ($scheduleResult->num_rows > 0) {
-                echo "<div style='color: red;'>$errorMessage</div>";
-                $errorMessage = "A movie is already scheduled in this cinema on the selected date.";
-            }
-        }
-    }
-
-    
-    $origin = "SELECT * FROM movie_reservation_system.MOVIE WHERE MOV_ID='$MOV_ID'";
-    $result = $mysqli->query($origin);
-
-    if ($result->num_rows === 0) {
-        echo "<div style='color: red;'>Error: The record to update does not exist.</div>";
-        exit();
-    }
-
-    $row = $result->fetch_assoc();
-    
-    if($MOV_NAME != "" and $MOV_NAME != $row['MOV_NAME'])
-    {
-        $MOV_NAME = $MOV_NAME;
-    }
-    else{
-        $MOV_NAME = $row['MOV_NAME'];
-    }
-
-    if($MOV_LENGTH != "" and $MOV_LENGTH != $row['MOV_LENGTH'])
-    {
-        $MOV_LENGTH = $MOV_LENGTH;
-    }
-    else{
-        $MOV_LENGTH = $row['MOV_LENGTH'];
-    }
-
-    if($MOV_GENRE != "" and $MOV_GENRE != $row['MOV_GENRE'])
-    {
-        $MOV_GENRE = $MOV_GENRE;
-    }
-    else{
-        $MOV_GENRE = $row['MOV_GENRE'];
-    }
-
-    if($MOV_RATING != "" and $MOV_RATING != $row['MOV_RATING'])
-    {
-        $MOV_RATING = $MOV_RATING;
-    }
-    else{
-        $MOV_RATING = $row['MOV_RATING'];
-    }
-
-    if($MOV_PRICE != "" and $MOV_PRICE != $row['MOV_PRICE'])
-    {
-        $MOV_PRICE = $MOV_PRICE;
-    }
-    else{
-        $MOV_PRICE = $row['MOV_PRICE'];
-    }
-
-    if($CIN_ID != "" and $CIN_ID != $row['CIN_ID'])
-    {
-        $CIN_ID = $CIN_ID;
-    }
-    else{
-        $CIN_ID = $row['CIN_ID'];
-    }
-
-    $sql = "UPDATE movie_reservation_system.MOVIE SET MOV_NAME='$MOV_NAME', MOV_LENGTH='$MOV_LENGTH', MOV_GENRE='$MOV_GENRE', MOV_RATING='$MOV_RATING', MOV_PRICE='$MOV_PRICE', CIN_ID='$CIN_ID' WHERE MOV_ID='$MOV_ID'";
-    if(mysqli_query($mysqli,$sql))
-    {
-        echo "Data updated in Database Sucessfully.";
-    }
-    else {
-        echo mysqli_error($mysqli);
     }
 }
 
-// Handle DELETE operation
+// Delete Operation
 if (isset($_POST['delete'])) {
     $MOV_ID = $_POST['id'];
 
+    // Validate MOV_ID
     if (strlen($MOV_ID) !== 8 || !ctype_digit($MOV_ID)) {
-        echo "<div style='color: red;'>Error: MOV_ID must be of length 8 and must consist of digits only.</div>";
+        echo "<div style='color: red;'>Error: MOV_ID must be an 8-digit number.</div>";
         exit();
     }
 
     // Check if the record exists
-    $check_sql = "SELECT * FROM movie_reservation_system.MOVIE WHERE MOV_ID = '$MOV_ID'";
-    $check_result = $mysqli->query($check_sql);
-
-    if ($check_result->num_rows === 0) {
+    $checkSql = "SELECT * FROM movie_reservation_system.MOVIE WHERE MOV_ID = '$MOV_ID'";
+    $checkResult = $mysqli->query($checkSql);
+    if ($checkResult->num_rows === 0) {
         echo "<div style='color: red;'>Error: The record you are trying to delete does not exist.</div>";
         exit();
     }
 
-    // Delete record
-    $sql = "DELETE FROM movie_reservation_system.MOVIE WHERE MOV_ID = '$MOV_ID'";
-
-    if ($mysqli->query($sql)) {
+    // Delete the record
+    $deleteSql = "DELETE FROM movie_reservation_system.MOVIE WHERE MOV_ID = '$MOV_ID'";
+    if ($mysqli->query($deleteSql)) {
         echo "<div style='color: green;'>Movie deleted successfully!</div>";
-        header("Location: movie_database.php");
+        header("Location: movie_database.php"); // Redirect to refresh the table
         exit();
     } else {
         echo "<div style='color: red;'>Error: " . $mysqli->error . "</div>";
     }
 }
-
-
 
 // Display existing movies from the database
 $sql = "SELECT MOV_ID, MOV_NAME, MOV_LENGTH, MOV_GENRE, MOV_RATING, MOV_PRICE, CIN_ID FROM MOVIE";
