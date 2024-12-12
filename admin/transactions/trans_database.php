@@ -11,6 +11,9 @@ if (!isset($_SESSION['EMP_FNAME']) && !isset($_SESSION['EMP_ID'])) {
 
 $updateMessage = null;
 
+// Add a check for the user role (admin or employee)
+$isAdmin = isset($_SESSION['ROLE']) && $_SESSION['ROLE'] == 'Admin'; // Check if user is admin
+
 function validateInput($trans_number, $trans_due, $trans_payment, $mysqli) {
     global $errorMessage;
 
@@ -71,6 +74,15 @@ $sql = "SELECT T.TRANS_NUMBER, T.TRANS_DUE, T.TRANS_PAYMENT, T.TRANS_CHANGE, T.T
         FROM TRANSACTIONS T
         JOIN EMPLOYEE E ON T.EMP_ID = E.EMP_ID";
 $result = $mysqli->query($sql);
+
+// Redirect based on user role (admin or employee)
+if ($isAdmin) {
+
+} else {
+    // Employee is redirected to ticket.html
+    header('Location: ../../transaction/tickets/tickets.html');
+    exit();
+}
 
 ?>
 
